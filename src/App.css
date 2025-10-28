@@ -1,0 +1,380 @@
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: "PlatinumSignOver", sans-serif;
+  background: black;
+}
+@font-face {
+  font-family: "PlatinumSignOver";
+  src: url("/src/assets/PlatinumSignOver.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap; /* Mejora el rendimiento de carga */
+}
+
+:root {
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  color: #0f0f0f;
+  background-color: #f6f6f6;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+.container {
+  margin: 0;
+  padding-top: 10vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: 0.75s;
+}
+
+.logo.tauri:hover {
+  filter: drop-shadow(0 0 2em #24c8db);
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: #535bf2;
+}
+
+h1 {
+  text-align: center;
+}
+
+input,
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  color: #0f0f0f;
+  background-color: #ffffff;
+  transition: border-color 0.25s;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+}
+
+button {
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: #396cd8;
+}
+button:active {
+  border-color: #396cd8;
+  background-color: #e8e8e8;
+}
+
+input,
+button {
+  outline: none;
+}
+
+#greet-input {
+  margin-right: 5px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: #f6f6f6;
+    background-color: #2f2f2f;
+  }
+
+  a:hover {
+    color: #24c8db;
+  }
+
+  input,
+  button {
+    color: #ffffff;
+    background-color: #0f0f0f98;
+  }
+  button:active {
+    background-color: #0f0f0f69;
+  }
+}
+
+/* App.css — estilos para Tauri-react-app */
+
+.app-container {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: black;
+  font-family: "PlatinumSignOver", sans-serif;
+  position: relative;
+}
+
+.page {
+  display: none;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.page.active {
+  display: block;
+}
+
+.full-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mute-btn {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.game-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.play-btn {
+  font-size: 8vh;
+  padding: 4vh 8vh;
+  border-radius: 3vh;
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.countdown {
+  font-size: 20vh;
+  font-weight: bold;
+  color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.timer-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60vh;
+  height: 60vh;
+}
+
+.timer-bg,
+.timer-overlay {
+  width: 100%;
+  height: 100%;
+}
+
+.score-display {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 6vh;
+}
+
+#score {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 150px;
+  font-weight: bold;
+  color: white;
+  font-family: "PlatinumSignOver", sans-serif;
+}
+
+.options-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+}
+
+.options-menu {
+  position: absolute;
+  right: 20px;
+  top: 80px;
+  background: rgba(70, 70, 70, 0.85);
+  color: white;
+  padding: 15px;
+  border-radius: 10px;
+  min-width: 260px;
+}
+
+.options-menu label {
+  display: block;
+  margin-bottom: 18px;
+}
+
+.options-menu input[type="file"],
+.options-menu input[type="number"] {
+  margin-top: 8px;
+  width: 100%;
+}
+
+.options-menu button {
+  display: block;
+  margin-top: 10px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  background: #4caf50;
+  color: white;
+  cursor: pointer;
+}
+
+.serial-controls {
+  position: relative;
+  top: 20px;
+  /* left: 20px; */
+  bottom: 20px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 12px;
+  border-radius: 8px;
+  color: white;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.serial-controls input {
+  padding: 6px;
+}
+
+.serial-log {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  width: 380px;
+  max-height: 45vh;
+  overflow: auto;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 12px;
+  border-radius: 8px;
+  color: white;
+}
+
+.log-title {
+  font-weight: bold;
+  margin-top: 6px;
+}
+
+.final-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.final-label {
+  font-size: 8vh;
+  font-weight: bold;
+}
+
+.final-score {
+  font-size: 6vh;
+  margin-top: 60px;
+}
+
+.replay-btn {
+  margin-top: 40px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: none;
+  background: #2196f3;
+  color: white;
+  cursor: pointer;
+}
+
+/* 🔹 Contenedor del temporizador */
+#timerWrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vh; /* Escala con la altura */
+  height: 100vh; /* Mantiene proporción */
+}
+
+#timerWrapper svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible; /* evita cortes del stroke */
+}
+
+/* 🔹 Fondo de la dona */
+#timerWrapper svg:first-child circle {
+  stroke-width: 15%; /* Escala con la pantalla */
+  stroke: #ddd;
+}
+
+/* 🔹 Dona principal (temporizador) */
+#timerWrapper svg:nth-child(2) circle {
+  stroke-width: 12%; /* Escala con la pantalla */
+  stroke: #ff5722;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+svg {
+  overflow: visible;
+}
