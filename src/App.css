@@ -9,7 +9,7 @@ html {
 }
 @font-face {
   font-family: "PlatinumSignOver";
-  src: url("/src/assets/PlatinumSignOver.ttf") format("truetype");
+  src: url("assets/PlatinumSignOver.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap; /* Mejora el rendimiento de carga */

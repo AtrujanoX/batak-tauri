@@ -57,6 +57,7 @@ fn send_command(state: State<Arc<Mutex<SerialState>>>, command: String) -> Resul
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_fs::init())
         .manage(Arc::new(Mutex::new(SerialState::default())))
         .setup(|app| {
             let app_handle = app.handle().clone();

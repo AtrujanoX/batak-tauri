@@ -22,16 +22,21 @@
       "csp": null
     }
   },
+
+
   "bundle": {
     "active": true,
-    "targets": "all",
+    "targets": ["appimage", "deb"],
     "linux": {
       "appimage": {
         "bundleMediaFramework": false,
         "files": {}
       },
       "deb": {
-        "files": {}
+        "files": {
+          "/usr/share/README.md": "../README.md",
+          "/usr/share/assets": "../assets/"
+        }
       },
       "rpm": {
         "epoch": 0,
