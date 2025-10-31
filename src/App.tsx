@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { invoke } from '@tauri-apps/api/core';
+import { invoke, convertFileSrc } from '@tauri-apps/api/core';
 import { listen, UnlistenFn } from '@tauri-apps/api/event';
+import { appDataDir, join } from '@tauri-apps/api/path';
+import { writeFile, mkdir } from '@tauri-apps/plugin-fs';
 import './App.css';
 
 export default function App() {
@@ -23,7 +25,7 @@ export default function App() {
   const timerIntervalRef = useRef<number | null>(null);
   const [optionsOpen, setOptionsOpen] = useState(false);
   const inactivityRef = useRef<number | null>(null);
-  const [portName, setPortName] = useState('COM6');
+  const [portName, setPortName] = useState('/dev/ttyUSB0');
   const [connected, setConnected] = useState(false);
   const [lastMsg, setLastMsg] = useState('Esperando datos...');
   const [log, setLog] = useState<string[]>([]);
@@ -31,16 +33,18 @@ export default function App() {
   const serialListenerRef = useRef(null as unknown as UnlistenFn | null);
 
   useEffect(() => {
-    const storedVideo = localStorage.getItem('videoDefault');
-    const storedWallpaper = localStorage.getItem('wallDefault');
-    const storedWallpaper2 = localStorage.getItem('wallPage2');
-    if (storedVideo) {
-      setVideoFileUrl(`${storedVideo}`);
-      setUseVideoAtStart(true);
-    } else if (storedWallpaper) {
-      setWallDefaultUrl(`${storedWallpaper}`);
-    }
-    if (storedWallpaper2) setWallPage2Url(`${storedWallpaper2}`);
+    (async () => {
+      const storedVideoPath = localStorage.getItem('videoDefault');
+      const storedWallpaperPath = localStorage.getItem('wallDefault');
+      const storedWallpaper2Path = localStorage.getItem('wallPage2');
+      if (storedVideoPath) {
+        setVideoFileUrl(convertFileSrc(storedVideoPath));
+        setUseVideoAtStart(true);
+      } else if (storedWallpaperPath) {
+        setWallDefaultUrl(convertFileSrc(storedWallpaperPath));
+      }
+      if (storedWallpaper2Path) setWallPage2Url(convertFileSrc(storedWallpaper2Path));
+    })();
   }, []);
 
   useEffect(() => {
@@ -71,6 +75,8 @@ export default function App() {
           if (m) {
             const estado = parseInt(m[1], 10);
             if (estado === 1) setScore((p) => p + 1);
+            clearTimeout(inactivityRef.current as any);
+            inactivityRef.current = setTimeout(() => setPage(1), 30000);
           }
         });
         serialListenerRef.current = unlisten;
@@ -167,6 +173,7 @@ export default function App() {
         if (elapsed >= total) {
           clearInterval(timerIntervalRef.current as number);
           setShowTimer(false);
+          sendCommand('STOP');
           setPage(3);
         }
       }, interval);
@@ -179,27 +186,41 @@ export default function App() {
     }
   }, [showTimer]);
 
-  function onVideoFile(e: React.ChangeEvent<HTMLInputElement>) {
+  async function saveToUserAssets(file: File, baseName: string): Promise<{ path: string; url: string; }> {
+    const baseDir = await appDataDir();
+    const destDir = await join(baseDir, 'user-assets');
+    await mkdir(destDir, { recursive: true });
+    const ext = (() => {
+      const p = file.name.lastIndexOf('.');
+      return p >= 0 ? file.name.slice(p + 1) : 'bin';
+    })();
+    const destPath = await join(destDir, `${baseName}.${ext}`);
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    await writeFile(destPath, bytes);
+    return { path: destPath, url: convertFileSrc(destPath) };
+  }
+
+  async function onVideoFile(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
     if (!f) return;
-    const url = URL.createObjectURL(f);
+    const { path, url } = await saveToUserAssets(f, 'video');
     setVideoFileUrl(url);
-    localStorage.setItem('videoDefault', f.name);
+    localStorage.setItem('videoDefault', path);
     setUseVideoAtStart(true);
   }
-  function onWallDefaultFile(e: React.ChangeEvent<HTMLInputElement>) {
+  async function onWallDefaultFile(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
     if (!f) return;
-    const url = URL.createObjectURL(f);
+    const { path, url } = await saveToUserAssets(f, 'wallpaper_default');
     setWallDefaultUrl(url);
-    localStorage.setItem('wallDefault', url);
+    localStorage.setItem('wallDefault', path);
   }
-  function onWallPage2File(e: React.ChangeEvent<HTMLInputElement>) {
+  async function onWallPage2File(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
     if (!f) return;
-    const url = URL.createObjectURL(f);
+    const { path, url } = await saveToUserAssets(f, 'wallpaper_page2');
     setWallPage2Url(url);
-    localStorage.setItem('wallPage2', url);
+    localStorage.setItem('wallPage2', path);
   }
 
   function applyOptions() {
@@ -227,7 +248,7 @@ export default function App() {
       {/* Page 1 */}
       <div className={`page ${page === 1 ? 'active' : ''}`} onClick={() => setPage(2)}>
         {useVideoAtStart && videoFileUrl ? (
-          <video ref={videoRef} src={'assets/video.mp4'} autoPlay loop muted playsInline className="full-bg" />
+          <video ref={videoRef} src={videoFileUrl} autoPlay loop muted playsInline className="full-bg" />
         ) : (
           <img src={wallDefaultUrl || 'assets/wallpaper_default.jpg'} alt="wall" className="full-bg" />
         )}
